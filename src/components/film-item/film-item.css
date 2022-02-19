@@ -1,0 +1,35 @@
+.cardWrap {
+  width: 454px;
+  height: 281px;
+  display: flex;
+  box-shadow: 0 4px 12px 0 #00000026;
+}
+
+.cardWrap__poster {
+  width: 183px;
+  height: 281px;
+}
+
+.cardWrap__description {
+  margin: 20px;
+  margin-top: 12px;
+}
+
+.cardWrap__description--title {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+
+.cardWrap__description--releaseDate {
+  font-size: 12px;
+  color: #827e7e;
+}
+
+.cardWrap__description--overview {
+  margin-top: 8px;
+  font-size: 12px;
+  width: 228px;
+  height: 132px;
+  overflow: hidden;
+}
