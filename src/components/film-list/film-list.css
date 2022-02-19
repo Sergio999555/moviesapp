@@ -5,11 +5,13 @@
 .film-container {
   padding: 0;
   margin: 0;
-  margin-left: 25%;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
   width: 1010px;
-  gap: 36px;
+  column-gap: 36px;
+  background-color: white;
 }
