@@ -1,0 +1,17 @@
+.header__wrap {
+  width: 1010px;
+  background-color: white;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.header__button-wrap {
+  margin: 32px auto;
+}
+
+.header__input {
+  width: 938px;
+  height: 24px;
+  margin: 0 auto;
+}

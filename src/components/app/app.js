@@ -1,7 +1,9 @@
 import React from "react";
+import ErrorIndicator from "../error-indicator/error-indicator";
 import FilmService from "../../services/film-service";
 import FilmList from "../film-list/film-list";
-
+import Header from "../header/header";
+import Spinner from "../spinner/spinner";
 import "../app/app.css";
 
 export default class App extends React.Component {
@@ -9,6 +11,8 @@ export default class App extends React.Component {
 
   state = {
     filmsResult: [],
+    loading: true,
+    error: false,
   };
 
   constructor() {
@@ -17,19 +21,38 @@ export default class App extends React.Component {
   }
 
   searchFilms = () => {
-    this.filmsService.getFilmSearch("return").then((item) => {
-      item.forEach((film) => {
-        this.setState(({ filmsResult }) => {
-          const newArr = [...filmsResult, film];
-          return {
-            filmsResult: newArr,
-          };
+    this.filmsService
+      .getFilmSearch("return")
+      .then((item) => {
+        this.setState({
+          filmsResult: [...item],
+          loading: false,
         });
-      });
-    });
+      })
+      .catch(this.onError);
+  };
+
+  onError = () => {
+    this.setState = {
+      error: true,
+      loading: false,
+    };
   };
 
   render() {
-    return <FilmList attribute={this.state.filmsResult} />;
+    const { loading, error, filmsResult } = this.state;
+    const hasData = !(loading || error);
+    const errorMessage = error ? <ErrorIndicator /> : null;
+    const spinner = loading ? <Spinner /> : null;
+    const content = hasData ? <FilmList attribute={filmsResult} /> : null;
+
+    return (
+      <>
+        <Header />
+        {errorMessage}
+        {spinner}
+        {content}
+      </>
+    );
   }
 }
