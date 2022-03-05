@@ -1,0 +1,12 @@
+.pagination_wrap {
+  width: 1210px;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  padding-bottom: 36px;
+}
+
+.pagiantion_button {
+  padding: 0 auto;
+}

@@ -1,18 +1,23 @@
-export default class FilmService {
-  BASEURL =
-    "https://api.themoviedb.org/3/search/movie/?api_key=5582aa6ba898b3bd594368f221544cd3&query=";
+export default class ApiService {
+  baseUrl = "https://api.themoviedb.org/3/";
+  apiKey = "5582aa6ba898b3bd594368f221544cd3";
 
-  getFilmSearch(searchWord) {
-    return fetch(`${this.BASEURL}${searchWord}`)
-      .then((res) => res.json())
-      .then((res) => res.results)
-      .catch((err) => console.log(err));
+  getFilmsList = (url) => {
+    return fetch(url).then((res) => {
+      if (!res.ok) throw new Error("Error");
+      return res.json();
+    });
+  };
+
+  getFilmSearch(inputValue, startPage) {
+    return this.getFilmsList(
+      `${this.baseUrl}search/movie?api_key=${this.apiKey}&query=${inputValue}&page=${startPage}`
+    );
   }
-}
 
-// const film = new FilmService();
-// film.getFilmSearch("return").then((item) => {
-//   item.forEach((item) => {
-//     console.log(item);
-//   });
-// });
+  getGenresList = () => {
+    return this.getFilmsList(
+      `${this.baseUrl}genre/movie/list?api_key=${this.apiKey}`
+    );
+  };
+}

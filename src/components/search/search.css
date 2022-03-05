@@ -1,0 +1,13 @@
+.input_wrap {
+  width: 1210px;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  padding-bottom: 36px;
+}
+
+.input_field {
+  width: 1010px !important;
+  margin: 0 auto;
+}

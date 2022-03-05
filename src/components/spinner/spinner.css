@@ -1,6 +1,3 @@
-.spinner-space {
-  margin-left: 50%;
-
-  margin-top: 30%;
-  font-size: 48px;
+.spinner__wrap {
+  margin: 10% auto;
 }

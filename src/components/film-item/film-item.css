@@ -1,8 +1,8 @@
 .cardWrap {
-  margin-top: 36px;
-  width: 454px;
+  width: 510px;
   height: 281px;
   display: flex;
+  justify-content: space-between;
   box-shadow: 0 4px 12px 0 #00000026;
 }
 
@@ -14,23 +14,61 @@
 .cardWrap__description {
   margin: 20px;
   margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
-.cardWrap__description--title {
+.cardWrap__description-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.cardWrap__description-voteAverage {
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.cardWrap__description-title {
   margin-top: 0;
   margin-bottom: 8px;
-  font-size: 20px;
+  font-size: 16px;
+  width: 260px;
 }
 
-.cardWrap__description--releaseDate {
+.cardWrap__description-releaseDate {
   font-size: 12px;
   color: #827e7e;
 }
 
-.cardWrap__description--overview {
+.cardWrap__genre-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-top: 8px;
+}
+
+.cardWrap__genre-item {
   font-size: 12px;
-  width: 228px;
-  height: 132px;
+  border: 1px solid #d9d9d9;
+  padding: 0 4px;
+  background-color: #fafafa;
+}
+
+.cardWrap__description-overview {
+  margin-top: 4px;
+  font-size: 12px;
+  width: 290px;
+  height: 96px;
   overflow: hidden;
 }
+
+/* .cardWrap__rate-container {
+  display: flex;
+} */

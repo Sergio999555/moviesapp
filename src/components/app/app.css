@@ -1,1 +1,13 @@
+.alert__container {
+  width: 1210px;
+  margin: 0 auto !important;
+  text-align: center;
+}
 
+.tabs__container {
+  width: 1210px;
+  background-color: white;
+  margin: 0 auto !important;
+  display: flex;
+  align-items: center;
+}
