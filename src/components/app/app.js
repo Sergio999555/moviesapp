@@ -28,7 +28,7 @@ export default class App extends Component {
 
   componentDidMount = () => {
     this.searchFilms();
-    //  this.getGenres()
+    this.getGenres();
   };
 
   componentDidUpdate(prevState) {
@@ -62,7 +62,7 @@ export default class App extends Component {
   };
 
   getGenres = () => {
-    this.filmsService.getGenresList().then((item) => {
+    this.filmService.getGenresList().then((item) => {
       this.setState({
         genres: [...item.genres],
       });
