@@ -1,16 +1,14 @@
-import React, { Component } from "react";
-import FilmList from "../film-list/film-list";
-import "../app/app.css";
+import React from "react";
 import FilmService from "../../services/film-service";
+import FilmList from "../film-list/film-list";
 import Search from "../search/search";
 import Spinner from "../spinner/spinner";
 import PaginationPage from "../pagination/pagination";
-import "antd/dist/antd.min.css";
-import { Alert, Tabs } from "antd";
+import { Provider } from "../context/context";
+import { Alert, Row, Tabs } from "antd";
+import "../app/app.css";
 
-const { TabPane } = Tabs;
-
-export default class App extends Component {
+export default class App extends React.Component {
   filmService = new FilmService();
 
   state = {
@@ -20,15 +18,17 @@ export default class App extends Component {
     inputValue: "return",
     totalPages: null,
     currentPages: 1,
+    genresList: 1,
     noResult: false,
-    onRated: false,
-    localStorageData: [],
-    genres: [],
+    filmsRated: null,
+    rating: {},
   };
 
   componentDidMount = () => {
-    this.searchFilms();
     this.getGenres();
+
+    this.searchFilms();
+    this.filmService.getSessionId();
   };
 
   componentDidUpdate(prevState) {
@@ -45,12 +45,6 @@ export default class App extends Component {
     this.filmService
       .getFilmSearch(inputValue, currentPages)
       .then((item) => {
-        if (item.length === 0) {
-          this.setState({
-            error: true,
-            totalPages: null,
-          });
-        }
         this.setState({
           movies: item.results,
           loading: false,
@@ -64,7 +58,7 @@ export default class App extends Component {
   getGenres = () => {
     this.filmService.getGenresList().then((item) => {
       this.setState({
-        genres: [...item.genres],
+        genresList: [...item.genres],
       });
     });
   };
@@ -82,49 +76,19 @@ export default class App extends Component {
 
   searchResult = (text) => {
     if (text === "") text = "return";
-    this.setState({
-      inputValue: text,
-    });
+    this.setState({ inputValue: text });
     this.switchPage();
   };
 
-  onChangeTab = (value) => {
-    if (value === "2") {
-      this.setState({
-        onRated: true,
-        localStorageData: [...this.parseLocalStorage()],
+  toRaiting = (value, id) => {
+    this.filmService.rateMovie(value, id).then(() => {
+      this.filmService.getRated().then((el) => {
+        this.setState({
+          filmsRated: el.results,
+          rating: { ...this.state.rating, [id]: value },
+        });
       });
-    } else {
-      this.setState({ onRated: false });
-    }
-  };
-
-  toLocalStorage = (stars, id) => {
-    if (stars) {
-      const ratedMovies = this.state.movies.reduce((acc, element) => {
-        if (element.id === id) {
-          element.voteStars = stars;
-          acc.push(element);
-        }
-        return acc;
-      }, []);
-      localStorage.setItem(id, JSON.stringify(ratedMovies));
-    } else {
-      localStorage.removeItem(id);
-      this.setState(({ localStorageData }) =>
-        localStorageData.filter((element) => element.id !== id)
-      );
-    }
-  };
-
-  parseLocalStorage = () => {
-    const res = [];
-    const keys = Object.keys(localStorage);
-    for (const key of keys) {
-      res.push(...JSON.parse(localStorage.getItem(key)));
-    }
-
-    return res;
+    });
   };
 
   render() {
@@ -134,63 +98,14 @@ export default class App extends Component {
       inputValue,
       totalPages,
       currentPages,
+      genresList,
       noResult,
-      onRated,
       loading,
-      genres,
+      filmsRated,
+      rating,
     } = this.state;
 
-    const { searchResult, switchPage } = this;
-
-    const spinner = loading ? <Spinner /> : null;
-
-    const search = onRated ? null : (
-      <Search searchResult={searchResult} inputValue={inputValue} />
-    );
-
-    const pagination = !(onRated || noResult) ? (
-      <PaginationPage
-        totalPages={totalPages}
-        currentPages={currentPages}
-        switchPage={switchPage}
-      />
-    ) : null;
-
-    const content = onRated ? (
-      <FilmList
-        movies={movies}
-        toLocalStorage={this.toLocalStorage}
-        parseLocalStorage={this.parseLocalStorage}
-        onRated={onRated}
-        genres={genres}
-      />
-    ) : (
-      <FilmList
-        movies={movies}
-        toLocalStorage={this.toLocalStorage}
-        onRated={onRated}
-        genres={genres}
-      />
-    );
-
-    const tabs = (
-      <Tabs
-        defaultActiveKey="1"
-        className="tabs__container"
-        onChange={this.onChangeTab}
-      >
-        <TabPane tab="Search" key="1" />
-        <TabPane tab="Rated" key="2" />
-      </Tabs>
-    );
-
-    const noResultAlrt = noResult ? (
-      <Alert
-        message="404 NOT FOUND :("
-        type="error"
-        className="alert__container"
-      />
-    ) : null;
+    const { TabPane } = Tabs;
 
     if (!navigator.onLine)
       <Alert
@@ -207,15 +122,68 @@ export default class App extends Component {
       />;
     }
 
+    const { searchResult, switchPage } = this;
+    const hasData = !(loading || onError || noResult);
+    const noResultAlrt = noResult ? (
+      <Alert
+        message="404 NOT FOUND :("
+        type="error"
+        className="alert__container"
+      />
+    ) : null;
+
+    const errRate = <p>У Вас нет оцененных фильмов</p>;
+    const spinner = loading ? <Spinner /> : null;
+
+    const content = hasData ? (
+      <FilmList
+        movies={movies.map((film) => {
+          if (rating[film.id]) film.rating = rating[film.id];
+          return film;
+        })}
+        toRaiting={this.toRaiting}
+      />
+    ) : null;
+
+    const search = (
+      <Search searchResult={searchResult} inputValue={inputValue} />
+    );
+
+    const pagination = !(noResult || loading) ? (
+      <PaginationPage
+        totalPages={totalPages}
+        currentPages={currentPages}
+        switchPage={switchPage}
+      />
+    ) : null;
+
+    const ratedFilmList = filmsRated ? (
+      <FilmList movies={filmsRated} />
+    ) : (
+      errRate
+    );
+
     return (
-      <>
-        {tabs}
-        {search}
-        {noResultAlrt}
-        {spinner}
-        {content}
-        {pagination}
-      </>
+      <Provider value={genresList}>
+        <Tabs
+          defaultActiveKey="1"
+          className="tabs__container"
+          onChange={this.onChangeTab}
+        >
+          <TabPane tab="Search" key="1">
+            <Row>
+              {search}
+              {noResultAlrt}
+              {spinner}
+              {content}
+              {pagination}
+            </Row>
+          </TabPane>
+          <TabPane tab="Rated" key="2">
+            <Row>{ratedFilmList}</Row>
+          </TabPane>
+        </Tabs>
+      </Provider>
     );
   }
 }

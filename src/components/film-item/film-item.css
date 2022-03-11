@@ -4,11 +4,14 @@
   display: flex;
   justify-content: space-between;
   box-shadow: 0 4px 12px 0 #00000026;
+  border-radius: 10px;
 }
 
 .cardWrap__poster {
   width: 183px;
   height: 281px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 .cardWrap__description {
@@ -50,7 +53,7 @@
 .cardWrap__genre-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  column-gap: 8px;
   margin-top: 8px;
 }
 

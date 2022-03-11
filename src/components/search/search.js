@@ -29,7 +29,7 @@ export default class Search extends React.Component {
           className="input_field"
           onChange={this.onChange}
           placeholder="Type to search..."
-          value={this.state.searchQuery}
+          value={this.state.inputValue}
           autoFocus
         />
       </div>

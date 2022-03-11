@@ -16,4 +16,5 @@ const PaginationPage = ({ currentPages, totalPages, switchPage }) => {
     </div>
   );
 };
+
 export default PaginationPage;

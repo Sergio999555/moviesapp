@@ -11,15 +11,26 @@ export default class FilmItem extends Component {
     return `${arr.join(" ")}...`;
   };
 
-  onChangeRate = (stars) => {
-    this.props.toLocalStorage(stars, this.props.id);
+  state = {
+    stars: null,
   };
 
-  getRate = JSON.parse(localStorage.getItem(this.props.id));
+  onChange = (value) => {
+    const { el, id } = this.props;
+    this.setState({ stars: value });
+    if (value !== 0) el(value, id);
+  };
 
   render() {
-    const { poster_path, title, release_date, overview, vote_average } =
-      this.props;
+    const {
+      poster_path,
+      title,
+      release_date,
+      overview,
+      vote_average,
+      rating,
+      genre_ids,
+    } = this.props;
 
     const poster = poster_path ? (
       <img
@@ -63,17 +74,19 @@ export default class FilmItem extends Component {
             <span className="cardWrap__description-releaseDate">{date}</span>
           </div>
           <Consumer>
-            {(genreName) => {
-              const genreList = genreName.map((item) => {
+            {(data) => {
+              const newRes = data.filter((x) =>
+                genre_ids.some((y) => x.id === y)
+              );
+              const result = newRes.map((el) => {
                 return (
-                  <span className="cardWrap__genre-item" key={item}>
-                    {item}
-                  </span>
+                  <p
+                    key={el.id}
+                    className="cardWrap__genre-item"
+                  >{`${el.name}`}</p>
                 );
               });
-              return (
-                <div className="cardWrap__genre-container">{genreList}</div>
-              );
+              return <div className="cardWrap__genre-container">{result}</div>;
             }}
           </Consumer>
           <div className="cardWrap__description-overview">
@@ -83,8 +96,8 @@ export default class FilmItem extends Component {
             <Rate
               count={10}
               allowHalf
-              onChange={this.onChangeRate}
-              defaultValue={this.getRate && this.getRate[0]?.voteStars}
+              onChange={this.onChange}
+              value={rating}
             />
           </div>
         </div>
